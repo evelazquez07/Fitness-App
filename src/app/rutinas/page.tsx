@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { BottomNav } from "@/components/ui/BottomNav";
 
 const NIVELES = ["principiante", "intermedio", "avanzado"];
 const LUGARES = ["casa", "gimnasio"];
@@ -113,6 +114,7 @@ export default async function RutinasPage({
           )}
         </div>
       </div>
+          <BottomNav />
     </main>
   );
 }
