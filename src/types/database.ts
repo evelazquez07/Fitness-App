@@ -41,11 +41,21 @@ export interface Database {
         Row: Profile;
         Insert: Partial<Profile> & { id: string };
         Update: Partial<Profile>;
+        Relationships: [
+          {
+            foreignKeyName: "profiles_objetivo_id_fkey";
+            columns: ["objetivo_id"];
+            isOneToOne: false;
+            referencedRelation: "objetivos";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       objetivos: {
         Row: Objetivo;
         Insert: Partial<Objetivo> & { id: string; nombre: string };
         Update: Partial<Objetivo>;
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
