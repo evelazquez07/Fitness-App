@@ -46,6 +46,54 @@ export async function getEjerciciosDeRutina(
   return (data ?? []) as unknown as RutinaEjercicio[];
 }
 
+export async function getHistorialUsuario(supabase: SupabaseServer, userId: string) {
+  const { data } = await supabase
+    .from("entrenamientos_realizados")
+    .select("id, duracion_min, realizado_en, rutina:rutinas(nombre)")
+    .eq("user_id", userId)
+    .order("realizado_en", { ascending: false })
+    .limit(30);
+
+  return (data ?? []) as unknown as {
+    id: string;
+    duracion_min: number | null;
+    realizado_en: string;
+    rutina: { nombre: string } | null;
+  }[];
+}
+
+/** Minutos entrenados por día en los últimos 7 días, para la gráfica de barras. */
+export async function getMinutosPorDia(supabase: SupabaseServer, userId: string) {
+  const desde = new Date();
+  desde.setDate(desde.getDate() - 6);
+  desde.setHours(0, 0, 0, 0);
+
+  const { data } = await supabase
+    .from("entrenamientos_realizados")
+    .select("duracion_min, realizado_en")
+    .eq("user_id", userId)
+    .gte("realizado_en", desde.toISOString());
+
+  const dias: { fecha: Date; etiqueta: string; minutos: number }[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const fecha = new Date();
+    fecha.setDate(fecha.getDate() - i);
+    dias.push({
+      fecha,
+      etiqueta: fecha.toLocaleDateString("es-MX", { weekday: "short" }),
+      minutos: 0,
+    });
+  }
+
+  for (const registro of data ?? []) {
+    const fechaRegistro = new Date(registro.realizado_en);
+    const dia = dias.find((d) => d.fecha.toDateString() === fechaRegistro.toDateString());
+    if (dia) dia.minutos += registro.duracion_min ?? 0;
+  }
+
+  return dias;
+}
+
 export async function getEstadisticasUsuario(
   supabase: SupabaseServer,
   userId: string
