@@ -70,6 +70,7 @@ export interface Logro {
   icono: string;
 }
 
+export interface EntrenamientoRealizado {
   id: string;
   user_id: string;
   rutina_id: string | null;
