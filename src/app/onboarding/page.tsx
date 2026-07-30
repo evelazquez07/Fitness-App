@@ -10,11 +10,13 @@ export default async function OnboardingPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: objetivos } = await supabase
+  const { data } = await supabase
     .from("objetivos")
     .select("id, nombre")
     .eq("activo", true)
     .order("orden");
+
+  const objetivos = (data ?? []) as { id: string; nombre: string }[];
 
   return (
     <main className="min-h-dvh px-6 py-10">
@@ -23,7 +25,7 @@ export default async function OnboardingPage() {
         <p className="mb-8 text-white/60">
           Con esto armamos tu plan de entrenamiento ideal.
         </p>
-        <OnboardingForm objetivos={objetivos ?? []} />
+        <OnboardingForm objetivos={objetivos} />
       </div>
     </main>
   );
