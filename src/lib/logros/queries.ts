@@ -31,5 +31,5 @@ export async function revisarLogros(
   if (candidatos.length === 0) return;
 
   const filas = candidatos.map((logro_id) => ({ user_id: userId, logro_id }));
-  await supabase.from("usuario_logros").upsert(filas, { onConflict: "user_id,logro_id" });
+  await supabase.from("usuario_logros").upsert(filas, { ignoreDuplicates: true });
 }
