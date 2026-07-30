@@ -50,6 +50,15 @@ export default async function DashboardPage() {
           </form>
         </div>
 
+        <div className="mb-4 flex gap-4 text-sm">
+          <Link href="/perfil" className="text-white/60 hover:text-white">
+            Mi perfil
+          </Link>
+          <Link href="/historial" className="text-white/60 hover:text-white">
+            Historial
+          </Link>
+        </div>
+
         {rutina ? (
           <div className="card mb-4">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-400">
