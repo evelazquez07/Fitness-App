@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { BottomNav } from "@/components/ui/BottomNav";
 import { getLogrosUsuario } from "@/lib/logros/queries";
 
 export default async function LogrosPage() {
@@ -35,6 +36,7 @@ export default async function LogrosPage() {
           ))}
         </div>
       </div>
+          <BottomNav />
     </main>
   );
 }
