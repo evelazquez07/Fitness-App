@@ -31,36 +31,43 @@ export interface Objetivo {
   created_at: string;
 }
 
-// Estructura mínima requerida por @supabase/ssr. Se puede reemplazar por
-// el archivo generado con `supabase gen types typescript` cuando el
-// proyecto tenga más tablas.
-export interface Database {
-  public: {
-    Tables: {
-      profiles: {
-        Row: Profile;
-        Insert: Partial<Profile> & { id: string };
-        Update: Partial<Profile>;
-        Relationships: [
-          {
-            foreignKeyName: "profiles_objetivo_id_fkey";
-            columns: ["objetivo_id"];
-            isOneToOne: false;
-            referencedRelation: "objetivos";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      objetivos: {
-        Row: Objetivo;
-        Insert: Partial<Objetivo> & { id: string; nombre: string };
-        Update: Partial<Objetivo>;
-        Relationships: [];
-      };
-    };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
-  };
+export interface Ejercicio {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+  musculos: string[];
+  imagen_url: string | null;
+}
+
+export interface Rutina {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+  objetivo_id: string | null;
+  nivel: Nivel | null;
+  lugar_entreno: "casa" | "gimnasio" | "ambos" | null;
+  duracion_min: number | null;
+  grupo_muscular: string | null;
+}
+
+export interface RutinaEjercicio {
+  id: string;
+  rutina_id: string;
+  ejercicio_id: string;
+  orden: number;
+  series: number;
+  repeticiones: string;
+  peso_recomendado: string | null;
+  descanso_seg: number;
+  instrucciones: string | null;
+  ejercicio?: Ejercicio;
+}
+
+export interface EntrenamientoRealizado {
+  id: string;
+  user_id: string;
+  rutina_id: string | null;
+  duracion_min: number | null;
+  completado: boolean;
+  realizado_en: string;
 }
