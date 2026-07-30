@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { revisarLogros } from "@/lib/logros/queries";
 
 export async function finalizarEntrenamiento(rutinaId: string, duracionMin: number) {
   const supabase = createClient();
@@ -37,15 +38,24 @@ export async function finalizarEntrenamiento(rutinaId: string, duracionMin: numb
       ? (profile?.racha_dias ?? 0) + 1
       : 1;
   const nuevaExperiencia = (profile?.experiencia ?? 0) + 20;
+  const nuevoNivel = Math.floor(nuevaExperiencia / 100) + 1;
 
   await supabase
     .from("profiles")
     .update({
       racha_dias: nuevaRacha,
       experiencia: nuevaExperiencia,
+      nivel_gamificacion: nuevoNivel,
       ultimo_entreno_en: new Date().toISOString(),
     })
     .eq("id", user.id);
+
+  const { count: totalEntrenamientos } = await supabase
+    .from("entrenamientos_realizados")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id);
+
+  await revisarLogros(supabase, user.id, totalEntrenamientos ?? 0, nuevaRacha);
 
   redirect("/dashboard");
 }
