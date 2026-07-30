@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { BottomNav } from "@/components/ui/BottomNav";
 import { getHistorialUsuario, getMinutosPorDia } from "@/lib/rutinas/queries";
 
 export default async function HistorialPage() {
@@ -68,6 +69,7 @@ export default async function HistorialPage() {
           )}
         </div>
       </div>
+          <BottomNav />
     </main>
   );
 }
