@@ -63,7 +63,13 @@ export interface RutinaEjercicio {
   ejercicio?: Ejercicio;
 }
 
-export interface EntrenamientoRealizado {
+export interface Logro {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  icono: string;
+}
+
   id: string;
   user_id: string;
   rutina_id: string | null;
