@@ -60,7 +60,10 @@ export function EntrenamientoRunner({
         </p>
 
         {/* Ejercicio actual */}
-        <div className="card flex flex-1 flex-col items-center justify-center text-center">
+        <div
+          key={paso}
+          className="card fade-in flex flex-1 flex-col items-center justify-center text-center"
+        >
           <h1 className="mb-2 text-2xl font-bold">{actual.ejercicio?.nombre}</h1>
 
           {actual.ejercicio?.musculos && actual.ejercicio.musculos.length > 0 && (
