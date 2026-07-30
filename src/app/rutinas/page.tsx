@@ -98,7 +98,7 @@ export default async function RutinasPage({
         {/* Lista */}
         <div className="space-y-3">
           {(rutinas ?? []).map((r) => (
-            <Link key={r.id} href={`/entrenamiento/${r.id}`} className="card block">
+            <Link key={r.id} href={`/entrenamiento/${r.id}`} className="card fade-in block transition hover:border-brand-500">
               <h2 className="mb-1 font-bold">{r.nombre}</h2>
               <div className="flex gap-3 text-sm text-white/50">
                 <span>⏱ {r.duracion_min ?? "—"} min</span>
