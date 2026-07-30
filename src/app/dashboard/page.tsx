@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/auth/actions";
+import { BottomNav } from "@/components/ui/BottomNav";
 import {
   getRutinaDeHoy,
   getEjerciciosDeRutina,
@@ -56,18 +57,6 @@ export default async function DashboardPage() {
           </form>
         </div>
 
-        <div className="mb-4 flex gap-4 text-sm">
-          <Link href="/perfil" className="text-white/60 hover:text-white">
-            Mi perfil
-          </Link>
-          <Link href="/historial" className="text-white/60 hover:text-white">
-            Historial
-          </Link>
-          <Link href="/logros" className="text-white/60 hover:text-white">
-            Logros
-          </Link>
-        </div>
-
         {rutina ? (
           <div className="card fade-in mb-4">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-400">
@@ -115,6 +104,7 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+      <BottomNav />
     </main>
   );
 }
