@@ -42,6 +42,12 @@ export default async function DashboardPage() {
             <p className="text-sm text-white/50">
               Nivel {profile.nivel_gamificacion} · {profile.experiencia} XP
             </p>
+            <div className="mt-1 h-1.5 w-32 overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full bg-brand-500 transition-all"
+                style={{ width: `${profile.experiencia % 100}%` }}
+              />
+            </div>
           </div>
           <form action={signOut}>
             <button className="text-sm text-white/60 hover:text-white" type="submit">
@@ -57,10 +63,13 @@ export default async function DashboardPage() {
           <Link href="/historial" className="text-white/60 hover:text-white">
             Historial
           </Link>
+          <Link href="/logros" className="text-white/60 hover:text-white">
+            Logros
+          </Link>
         </div>
 
         {rutina ? (
-          <div className="card mb-4">
+          <div className="card fade-in mb-4">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-400">
               Entrenamiento de hoy
             </p>
@@ -77,7 +86,7 @@ export default async function DashboardPage() {
             </Link>
           </div>
         ) : (
-          <div className="card mb-4">
+          <div className="card fade-in mb-4">
             <p className="text-white/70">
               Aún no hay una rutina configurada para tu perfil. Vuelve pronto.
             </p>
@@ -91,7 +100,7 @@ export default async function DashboardPage() {
           Ver todas las rutinas →
         </Link>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="fade-in-delay-1 grid grid-cols-3 gap-3">
           <div className="card text-center">
             <p className="text-2xl font-bold text-brand-400">{profile.racha_dias}</p>
             <p className="text-xs text-white/50">Racha (días)</p>
