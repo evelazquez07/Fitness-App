@@ -10,14 +10,29 @@ const initialState: AuthState = { error: null };
 
 export function OnboardingForm({
   objetivos,
+  perfil,
+  textoBoton = "Guardar y continuar",
 }: {
   objetivos: { id: string; nombre: string }[];
+  perfil?: {
+    nombre?: string | null;
+    edad?: number | null;
+    sexo?: string | null;
+    estatura_cm?: number | null;
+    peso_kg?: number | null;
+    nivel?: string | null;
+    objetivo_id?: string | null;
+    dias_disponibles?: number | null;
+    minutos_por_sesion?: number | null;
+    lugar_entreno?: string | null;
+  };
+  textoBoton?: string;
 }) {
   const [state, formAction] = useFormState(saveOnboarding, initialState);
 
   return (
     <form action={formAction} className="space-y-4">
-      <input className="input" name="nombre" placeholder="Nombre" required />
+      <input className="input" name="nombre" placeholder="Nombre" defaultValue={perfil?.nombre ?? ""} required />
 
       <div className="grid grid-cols-2 gap-3">
         <input
@@ -27,8 +42,9 @@ export function OnboardingForm({
           placeholder="Edad"
           min={10}
           max={100}
+          defaultValue={perfil?.edad ?? ""}
         />
-        <select className="input" name="sexo" defaultValue="">
+        <select className="input" name="sexo" defaultValue={perfil?.sexo ?? ""}>
           <option value="" disabled>
             Sexo
           </option>
@@ -44,16 +60,18 @@ export function OnboardingForm({
           name="estatura_cm"
           type="number"
           placeholder="Estatura (cm)"
+          defaultValue={perfil?.estatura_cm ?? ""}
         />
         <input
           className="input"
           name="peso_kg"
           type="number"
           placeholder="Peso (kg)"
+          defaultValue={perfil?.peso_kg ?? ""}
         />
       </div>
 
-      <select className="input" name="nivel" defaultValue="">
+      <select className="input" name="nivel" defaultValue={perfil?.nivel ?? ""}>
         <option value="" disabled>
           Nivel de experiencia
         </option>
@@ -62,7 +80,7 @@ export function OnboardingForm({
         <option value="avanzado">Avanzado</option>
       </select>
 
-      <select className="input" name="objetivo_id" defaultValue="">
+      <select className="input" name="objetivo_id" defaultValue={perfil?.objetivo_id ?? ""}>
         <option value="" disabled>
           Objetivo principal
         </option>
@@ -74,7 +92,7 @@ export function OnboardingForm({
       </select>
 
       <div className="grid grid-cols-2 gap-3">
-        <select className="input" name="dias_disponibles" defaultValue="">
+        <select className="input" name="dias_disponibles" defaultValue={perfil?.dias_disponibles ?? ""}>
           <option value="" disabled>
             Días por semana
           </option>
@@ -84,7 +102,7 @@ export function OnboardingForm({
             </option>
           ))}
         </select>
-        <select className="input" name="minutos_por_sesion" defaultValue="">
+        <select className="input" name="minutos_por_sesion" defaultValue={perfil?.minutos_por_sesion ?? ""}>
           <option value="" disabled>
             Minutos/sesión
           </option>
@@ -96,7 +114,7 @@ export function OnboardingForm({
         </select>
       </div>
 
-      <select className="input" name="lugar_entreno" defaultValue="">
+      <select className="input" name="lugar_entreno" defaultValue={perfil?.lugar_entreno ?? ""}>
         <option value="" disabled>
           ¿Dónde entrenas?
         </option>
@@ -105,7 +123,7 @@ export function OnboardingForm({
       </select>
 
       <FormError message={state.error} />
-      <SubmitButton>Guardar y continuar</SubmitButton>
+      <SubmitButton>{textoBoton}</SubmitButton>
     </form>
   );
 }
