@@ -14,7 +14,7 @@ export default async function DashboardPage() {
     .from("profiles")
     .select("nombre, onboarding_completado")
     .eq("id", user.id)
-    .single();
+    .single<{ nombre: string | null; onboarding_completado: boolean }>();
 
   if (!profile?.onboarding_completado) redirect("/onboarding");
 
