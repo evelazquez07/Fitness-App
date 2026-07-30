@@ -75,6 +75,13 @@ export default async function DashboardPage() {
           </div>
         )}
 
+        <Link
+          href="/rutinas"
+          className="mb-4 block text-center text-sm text-white/60 hover:text-white"
+        >
+          Ver todas las rutinas →
+        </Link>
+
         <div className="grid grid-cols-3 gap-3">
           <div className="card text-center">
             <p className="text-2xl font-bold text-brand-400">{profile.racha_dias}</p>
