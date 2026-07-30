@@ -12,17 +12,17 @@ export async function getRutinaDeHoy(
   supabase: SupabaseServer,
   profile: Pick<Profile, "objetivo_id" | "nivel" | "lugar_entreno">
 ): Promise<Rutina | null> {
-  const base = supabase.from("rutinas").select("*").eq("activa", true);
+  const desde = () => supabase.from("rutinas").select("*").eq("activa", true);
 
   const intentos = [
     () =>
-      base
+      desde()
         .eq("objetivo_id", profile.objetivo_id ?? "")
         .eq("nivel", profile.nivel ?? "")
         .in("lugar_entreno", [profile.lugar_entreno ?? "", "ambos"]),
-    () => base.eq("objetivo_id", profile.objetivo_id ?? ""),
-    () => base.in("lugar_entreno", [profile.lugar_entreno ?? "", "ambos"]),
-    () => base,
+    () => desde().eq("objetivo_id", profile.objetivo_id ?? ""),
+    () => desde().in("lugar_entreno", [profile.lugar_entreno ?? "", "ambos"]),
+    () => desde(),
   ];
 
   for (const intento of intentos) {
