@@ -33,7 +33,7 @@ export async function signUp(
   const supabase = createClient();
   const { error } = await supabase.auth.signUp({ email, password });
 
-  if (error) return { error: `Error de Supabase: ${error.message}` };
+  if (error) return { error: "No se pudo crear la cuenta. Intenta de nuevo." };
   redirect("/onboarding");
 }
 
