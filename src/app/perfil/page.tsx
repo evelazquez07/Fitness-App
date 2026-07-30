@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { BottomNav } from "@/components/ui/BottomNav";
 import { OnboardingForm } from "@/components/profile/OnboardingForm";
 
 export default async function PerfilPage() {
@@ -37,6 +38,7 @@ export default async function PerfilPage() {
           textoBoton="Guardar cambios"
         />
       </div>
+          <BottomNav />
     </main>
   );
 }
