@@ -48,6 +48,7 @@ export interface Rutina {
   lugar_entreno: "casa" | "gimnasio" | "ambos" | null;
   duracion_min: number | null;
   grupo_muscular: string | null;
+  musculos?: string[];
 }
 
 export interface RutinaEjercicio {
