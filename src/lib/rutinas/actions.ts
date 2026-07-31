@@ -51,7 +51,9 @@ export async function finalizarEntrenamiento(
       experiencia: nuevaExperiencia,
       nivel_gamificacion: nuevoNivel,
       ultimo_entreno_en: new Date().toISOString(),
-      ...(esPrograma ? { programa_dia_actual: (profile?.programa_dia_actual ?? 0) + 1 } : {}),
+      ...(esPrograma && !entrenoHoy
+        ? { programa_dia_actual: (profile?.programa_dia_actual ?? 0) + 1 }
+        : {}),
     })
     .eq("id", user.id);
 
