@@ -18,6 +18,8 @@ export interface Profile {
   experiencia: number;
   nivel_gamificacion: number;
   racha_dias: number;
+  musculos_por_sesion: 1 | 2 | null;
+  programa_dia_actual: number;
   created_at: string;
   updated_at: string;
 }
