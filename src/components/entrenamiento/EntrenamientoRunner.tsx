@@ -10,11 +10,13 @@ export function EntrenamientoRunner({
   rutinaNombre,
   duracionEstimada,
   ejercicios,
+  esPrograma = false,
 }: {
   rutinaId: string;
   rutinaNombre: string;
   duracionEstimada: number;
   ejercicios: RutinaEjercicio[];
+  esPrograma?: boolean;
 }) {
   const [paso, setPaso] = useState(0);
   const [isPending, startTransition] = useTransition();
@@ -26,7 +28,7 @@ export function EntrenamientoRunner({
 
   function siguiente() {
     if (esUltimo) {
-      startTransition(() => finalizarEntrenamiento(rutinaId, duracionEstimada));
+      startTransition(() => finalizarEntrenamiento(rutinaId, duracionEstimada, esPrograma));
       return;
     }
     setPaso((p) => Math.min(p + 1, ejercicios.length - 1));
