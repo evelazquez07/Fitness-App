@@ -4,7 +4,6 @@ import { createClient } from "@/lib/supabase/server";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { OnboardingForm } from "@/components/profile/OnboardingForm";
 import { setMusculosPorSesion } from "@/lib/profile/actions";
-import { BottomNav } from "@/components/ui/BottomNav";
 
 export default async function PerfilPage() {
   const supabase = createClient();
