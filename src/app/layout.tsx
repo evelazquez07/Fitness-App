@@ -2,8 +2,18 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FitApp — Tu entrenamiento diario",
+  title: "FuarKing App — Tu entrenamiento diario",
   description: "Plataforma de entrenamiento físico personalizado.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "FuarKing",
+  },
 };
 
 export const viewport: Viewport = {
