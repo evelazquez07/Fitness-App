@@ -14,6 +14,7 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-dvh flex-col justify-center px-6 py-12">
       <div className="mx-auto w-full max-w-sm">
+        <img src="/icon.png" alt="FuarKing App" className="mx-auto mb-4 h-16 w-16 rounded-2xl" />
         <h1 className="mb-1 text-2xl font-bold">Bienvenido de vuelta</h1>
         <p className="mb-8 text-white/60">Inicia sesión para continuar tu entrenamiento.</p>
 
