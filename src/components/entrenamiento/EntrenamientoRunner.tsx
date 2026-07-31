@@ -101,7 +101,10 @@ export function EntrenamientoRunner({
         </div>
 
         {/* Controles */}
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex gap-2">
+          <button onClick={() => router.push("/rutinas")} className="btn-secondary flex-1">
+            Volver
+          </button>
           <button
             onClick={anterior}
             disabled={paso === 0}
