@@ -18,29 +18,36 @@ export default async function DashboardPage() {
   const { data: profile } = await supabase
     .from("profiles")
     .select(
-      "nombre, onboarding_completado, nivel, racha_dias, experiencia, nivel_gamificacion, musculos_por_sesion, programa_dia_actual"
+      "nombre, onboarding_completado, nivel, racha_dias, experiencia, nivel_gamificacion, musculos_por_sesion, programa_dia_actual, stats_reset_en"
     )
     .eq("id", user.id)
     .single();
 
   if (!profile?.onboarding_completado) redirect("/onboarding");
 
-  const { entrenamientosSemana, minutosSemana } = await getEstadisticasUsuario(supabase, user.id);
+  const { entrenamientosSemana, minutosSemana } = await getEstadisticasUsuario(
+    supabase,
+    user.id,
+    profile.stats_reset_en
+  );
 
   return (
     <main className="min-h-dvh px-6 py-8 pb-24">
       <div className="mx-auto w-full max-w-lg">
         <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Hola, {profile.nombre} 👋</h1>
-            <p className="text-sm text-white/50">
-              Nivel {profile.nivel_gamificacion} · {profile.experiencia} XP
-            </p>
-            <div className="mt-1 h-1.5 w-32 overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-full bg-brand-500 transition-all"
-                style={{ width: `${profile.experiencia % 100}%` }}
-              />
+          <div className="flex items-center gap-3">
+            <img src="/icon.png" alt="FuarKing App" className="h-10 w-10 rounded-xl" />
+            <div>
+              <h1 className="text-2xl font-bold">Hola, {profile.nombre} 👋</h1>
+              <p className="text-sm text-white/50">
+                Nivel {profile.nivel_gamificacion} · {profile.experiencia} XP
+              </p>
+              <div className="mt-1 h-1.5 w-32 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full bg-brand-500 transition-all"
+                  style={{ width: `${profile.experiencia % 100}%` }}
+                />
+              </div>
             </div>
           </div>
           <form action={signOut}>
