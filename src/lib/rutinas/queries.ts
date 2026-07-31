@@ -110,10 +110,13 @@ export async function getMinutosPorDia(supabase: SupabaseServer, userId: string)
 
 export async function getEstadisticasUsuario(
   supabase: SupabaseServer,
-  userId: string
+  userId: string,
+  statsResetEn?: string | null
 ) {
-  const desde = new Date();
-  desde.setDate(desde.getDate() - 7);
+  const hace7dias = new Date();
+  hace7dias.setDate(hace7dias.getDate() - 7);
+  const reset = statsResetEn ? new Date(statsResetEn) : null;
+  const desde = reset && reset > hace7dias ? reset : hace7dias;
 
   const { data: historial } = await supabase
     .from("entrenamientos_realizados")
