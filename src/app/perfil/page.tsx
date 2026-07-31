@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { OnboardingForm } from "@/components/profile/OnboardingForm";
-import { setMusculosPorSesion } from "@/lib/profile/actions";
+import { setMusculosPorSesion, reiniciarEstadisticas } from "@/lib/profile/actions";
 
 export default async function PerfilPage() {
   const supabase = createClient();
@@ -38,8 +38,47 @@ export default async function PerfilPage() {
           perfil={perfil ?? undefined}
           textoBoton="Guardar cambios"
         />
+
+        <div className="card fade-in mt-4">
+          <p className="mb-3 text-sm font-semibold">Músculos por sesión en tu programa</p>
+          <div className="flex gap-3">
+            <form action={setMusculosPorSesion.bind(null, 1)} className="flex-1">
+              <button
+                type="submit"
+                className={
+                  perfil?.musculos_por_sesion === 1 ? "btn-primary w-full" : "btn-secondary w-full"
+                }
+              >
+                1 músculo
+              </button>
+            </form>
+            <form action={setMusculosPorSesion.bind(null, 2)} className="flex-1">
+              <button
+                type="submit"
+                className={
+                  perfil?.musculos_por_sesion === 2 ? "btn-primary w-full" : "btn-secondary w-full"
+                }
+              >
+                2 músculos
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div className="card fade-in-delay-1 mt-4">
+          <p className="mb-2 text-sm font-semibold">Reiniciar progreso</p>
+          <p className="mb-3 text-xs text-white/50">
+            Pone la racha y los contadores de &quot;esta semana&quot; en cero. Tu historial de
+            entrenamientos NO se borra.
+          </p>
+          <form action={reiniciarEstadisticas}>
+            <button type="submit" className="btn-secondary w-full text-sm">
+              Reiniciar racha y estadísticas
+            </button>
+          </form>
+        </div>
       </div>
-          <BottomNav />
+      <BottomNav />
     </main>
   );
 }
