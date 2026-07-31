@@ -2,12 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/auth/actions";
+import { setMusculosPorSesion } from "@/lib/profile/actions";
+import { getRutinaPrograma } from "@/lib/rutinas/programa";
+import { getEstadisticasUsuario } from "@/lib/rutinas/queries";
 import { BottomNav } from "@/components/ui/BottomNav";
-import {
-  getRutinaDeHoy,
-  getEjerciciosDeRutina,
-  getEstadisticasUsuario,
-} from "@/lib/rutinas/queries";
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -20,19 +18,14 @@ export default async function DashboardPage() {
   const { data: profile } = await supabase
     .from("profiles")
     .select(
-      "nombre, onboarding_completado, objetivo_id, nivel, lugar_entreno, racha_dias, experiencia, nivel_gamificacion"
+      "nombre, onboarding_completado, nivel, racha_dias, experiencia, nivel_gamificacion, musculos_por_sesion, programa_dia_actual"
     )
     .eq("id", user.id)
     .single();
 
   if (!profile?.onboarding_completado) redirect("/onboarding");
 
-  const rutina = await getRutinaDeHoy(supabase, profile);
-  const ejercicios = rutina ? await getEjerciciosDeRutina(supabase, rutina.id) : [];
-  const { entrenamientosSemana, minutosSemana } = await getEstadisticasUsuario(
-    supabase,
-    user.id
-  );
+  const { entrenamientosSemana, minutosSemana } = await getEstadisticasUsuario(supabase, user.id);
 
   return (
     <main className="min-h-dvh px-6 py-8 pb-24">
@@ -57,37 +50,16 @@ export default async function DashboardPage() {
           </form>
         </div>
 
-        {rutina ? (
-          <div className="card fade-in mb-4">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-400">
-              Entrenamiento de hoy
-            </p>
-            <h2 className="mb-3 text-xl font-bold">{rutina.nombre}</h2>
-
-            <div className="mb-4 flex gap-4 text-sm text-white/60">
-              <span>⏱ {rutina.duracion_min ?? "—"} min</span>
-              <span>💪 {rutina.grupo_muscular ?? "General"}</span>
-              <span>📋 {ejercicios.length} ejercicios</span>
-            </div>
-
-            <Link href={`/entrenamiento/${rutina.id}`} className="btn-primary w-full">
-              Comenzar
-            </Link>
-          </div>
+        {profile.musculos_por_sesion == null ? (
+          <SelectorMusculosPorSesion />
         ) : (
-          <div className="card fade-in mb-4">
-            <p className="text-white/70">
-              Aún no hay una rutina configurada para tu perfil. Vuelve pronto.
-            </p>
-          </div>
+          <TarjetasEntrenamiento
+            supabase={supabase}
+            nivel={profile.nivel}
+            musculosPorSesion={profile.musculos_por_sesion}
+            diaActual={profile.programa_dia_actual}
+          />
         )}
-
-        <Link
-          href="/rutinas"
-          className="mb-4 block text-center text-sm text-white/60 hover:text-white"
-        >
-          Ver todas las rutinas →
-        </Link>
 
         <div className="fade-in-delay-1 grid grid-cols-3 gap-3">
           <div className="card text-center">
@@ -106,5 +78,92 @@ export default async function DashboardPage() {
       </div>
       <BottomNav />
     </main>
+  );
+}
+
+function SelectorMusculosPorSesion() {
+  return (
+    <div className="card fade-in mb-4">
+      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-400">
+        Antes de empezar
+      </p>
+      <h2 className="mb-3 text-lg font-bold">¿Cuántos músculos quieres entrenar por día?</h2>
+      <p className="mb-4 text-sm text-white/60">
+        Con esto armamos tu programa diario. Lo puedes cambiar después desde tu perfil.
+      </p>
+      <div className="flex gap-3">
+        <form action={setMusculosPorSesion.bind(null, 1)} className="flex-1">
+          <button type="submit" className="btn-secondary w-full">
+            1 músculo
+          </button>
+        </form>
+        <form action={setMusculosPorSesion.bind(null, 2)} className="flex-1">
+          <button type="submit" className="btn-primary w-full">
+            2 músculos
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+async function TarjetasEntrenamiento({
+  supabase,
+  nivel,
+  musculosPorSesion,
+  diaActual,
+}: {
+  supabase: ReturnType<typeof createClient>;
+  nivel: string | null;
+  musculosPorSesion: 1 | 2;
+  diaActual: number;
+}) {
+  const { rutina, musculosDeHoy } = await getRutinaPrograma(
+    supabase,
+    nivel,
+    musculosPorSesion,
+    diaActual
+  );
+
+  return (
+    <div className="mb-4 grid grid-cols-2 gap-3">
+      {/* Programa: entrenamiento de hoy */}
+      <div className="card fade-in flex flex-col">
+        <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-brand-400">
+          Tu programa · Hoy
+        </p>
+        {rutina ? (
+          <>
+            <p className="mb-1 text-sm font-bold capitalize">{musculosDeHoy.join(" + ")}</p>
+            <p className="mb-3 text-xs text-white/50">
+              Día {diaActual + 1} · {rutina.duracion_min ?? "—"} min
+            </p>
+            <Link
+              href={`/entrenamiento/${rutina.id}?programa=1`}
+              className="btn-primary mt-auto text-sm"
+            >
+              Comenzar
+            </Link>
+          </>
+        ) : (
+          <p className="text-xs text-white/50">Aún no hay rutina para tu nivel.</p>
+        )}
+      </div>
+
+      {/* Entrenamiento libre */}
+      <Link
+        href="/rutinas"
+        className="card fade-in-delay-1 flex flex-col justify-between transition hover:border-brand-500"
+      >
+        <div>
+          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-white/50">
+            Explorar
+          </p>
+          <p className="text-sm font-bold">Entrenamiento libre</p>
+          <p className="mt-1 text-xs text-white/50">Elige tú qué entrenar hoy</p>
+        </div>
+        <span className="mt-3 text-sm text-brand-400">Ver rutinas →</span>
+      </Link>
+    </div>
   );
 }
