@@ -17,6 +17,9 @@ export default async function HistorialPage() {
   ]);
 
   const maxMinutos = Math.max(...minutosPorDia.map((d) => d.minutos), 1);
+  const diasConEntreno = minutosPorDia.filter((d) => d.minutos > 0).length;
+  const totalMinutos7d = minutosPorDia.reduce((acc, d) => acc + d.minutos, 0);
+  const promedio7d = diasConEntreno > 0 ? Math.round(totalMinutos7d / diasConEntreno) : 0;
 
   return (
     <main className="min-h-dvh px-6 py-8 pb-24">
@@ -34,8 +37,11 @@ export default async function HistorialPage() {
           <div className="flex h-32 items-end justify-between gap-2">
             {minutosPorDia.map((d) => (
               <div key={d.etiqueta + d.fecha.toISOString()} className="flex flex-1 flex-col items-center gap-1">
+                {d.minutos > 0 && (
+                  <span className="text-[10px] font-semibold text-brand-400">{d.minutos}</span>
+                )}
                 <div
-                  className="w-full rounded-t bg-brand-500"
+                  className="w-full rounded-t bg-brand-500 transition-all"
                   style={{
                     height: `${Math.max((d.minutos / maxMinutos) * 100, d.minutos > 0 ? 6 : 2)}%`,
                   }}
@@ -43,6 +49,17 @@ export default async function HistorialPage() {
                 <span className="text-xs capitalize text-white/40">{d.etiqueta}</span>
               </div>
             ))}
+          </div>
+          <div className="mt-4 flex justify-between border-t border-surface-border pt-3 text-center text-xs text-white/50">
+            <span>
+              <strong className="block text-sm text-white">{diasConEntreno}</strong>días activos
+            </span>
+            <span>
+              <strong className="block text-sm text-white">{totalMinutos7d}</strong>min totales
+            </span>
+            <span>
+              <strong className="block text-sm text-white">{promedio7d}</strong>min/día promedio
+            </span>
           </div>
         </div>
 
