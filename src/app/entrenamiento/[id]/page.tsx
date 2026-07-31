@@ -5,8 +5,10 @@ import { EntrenamientoRunner } from "@/components/entrenamiento/EntrenamientoRun
 
 export default async function EntrenamientoPage({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { programa?: string };
 }) {
   const supabase = createClient();
   const {
@@ -31,6 +33,7 @@ export default async function EntrenamientoPage({
       rutinaNombre={rutina.nombre}
       duracionEstimada={rutina.duracion_min ?? 0}
       ejercicios={ejercicios}
+      esPrograma={searchParams.programa === "1"}
     />
   );
 }
