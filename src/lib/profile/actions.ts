@@ -4,6 +4,17 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { AuthState } from "@/lib/auth/actions";
 
+export async function setMusculosPorSesion(valor: 1 | 2) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await supabase.from("profiles").update({ musculos_por_sesion: valor }).eq("id", user.id);
+  redirect("/dashboard");
+}
+
 export async function saveOnboarding(
   _prevState: AuthState,
   formData: FormData
