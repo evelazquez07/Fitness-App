@@ -4,7 +4,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { revisarLogros } from "@/lib/logros/queries";
 
-export async function finalizarEntrenamiento(rutinaId: string, duracionMin: number) {
+export async function finalizarEntrenamiento(
+  rutinaId: string,
+  duracionMin: number,
+  esPrograma: boolean
+) {
   const supabase = createClient();
   const {
     data: { user },
@@ -21,7 +25,7 @@ export async function finalizarEntrenamiento(rutinaId: string, duracionMin: numb
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("racha_dias, experiencia, ultimo_entreno_en")
+    .select("racha_dias, experiencia, ultimo_entreno_en, programa_dia_actual")
     .eq("id", user.id)
     .single();
 
@@ -47,6 +51,7 @@ export async function finalizarEntrenamiento(rutinaId: string, duracionMin: numb
       experiencia: nuevaExperiencia,
       nivel_gamificacion: nuevoNivel,
       ultimo_entreno_en: new Date().toISOString(),
+      ...(esPrograma ? { programa_dia_actual: (profile?.programa_dia_actual ?? 0) + 1 } : {}),
     })
     .eq("id", user.id);
 
