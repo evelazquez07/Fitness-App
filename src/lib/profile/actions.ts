@@ -4,6 +4,25 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { AuthState } from "@/lib/auth/actions";
 
+/**
+ * Reinicia racha y contadores de "esta semana" sin borrar el historial real
+ * de entrenamientos (ese sigue completo en /historial).
+ */
+export async function reiniciarEstadisticas() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await supabase
+    .from("profiles")
+    .update({ racha_dias: 0, ultimo_entreno_en: null, stats_reset_en: new Date().toISOString() })
+    .eq("id", user.id);
+
+  redirect("/dashboard");
+}
+
 export async function setMusculosPorSesion(valor: 1 | 2) {
   const supabase = createClient();
   const {
