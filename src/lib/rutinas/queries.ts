@@ -12,25 +12,39 @@ export async function getRutinaDeHoy(
   supabase: SupabaseServer,
   profile: Pick<Profile, "objetivo_id" | "nivel" | "lugar_entreno">
 ): Promise<Rutina | null> {
-  const desde = () => supabase.from("rutinas").select("*").eq("activa", true);
+  const orCondiciones = [
+    profile.objetivo_id ? `objetivo_id.eq.${profile.objetivo_id}` : null,
+    profile.nivel ? `nivel.eq.${profile.nivel}` : null,
+  ].filter(Boolean) as string[];
+
+  const base = () => supabase.from("rutinas").select("*").eq("activa", true);
 
   const intentos = [
     () =>
-      desde()
-        .eq("objetivo_id", profile.objetivo_id ?? "")
-        .eq("nivel", profile.nivel ?? "")
-        .in("lugar_entreno", [profile.lugar_entreno ?? "", "ambos"]),
-    () => desde().eq("objetivo_id", profile.objetivo_id ?? ""),
-    () => desde().in("lugar_entreno", [profile.lugar_entreno ?? "", "ambos"]),
-    () => desde(),
+      orCondiciones.length
+        ? base().or(orCondiciones.join(",")).in("lugar_entreno", [profile.lugar_entreno ?? "", "ambos"])
+        : null,
+    () => (orCondiciones.length ? base().or(orCondiciones.join(",")) : null),
+    () => base().in("lugar_entreno", [profile.lugar_entreno ?? "", "ambos"]),
+    () => base(),
   ];
 
   for (const intento of intentos) {
-    const { data } = await intento().limit(1);
-    if (data && data.length > 0) return data[0] as Rutina;
+    const query = intento();
+    if (!query) continue;
+    const { data } = await query;
+    if (data && data.length > 0) return elegirDelDia(data as Rutina[]);
   }
 
   return null;
+}
+
+/** Rota entre las coincidencias según el día del año, así "hoy" cambia cada día. */
+function elegirDelDia(rutinas: Rutina[]): Rutina {
+  const inicioAno = new Date(new Date().getFullYear(), 0, 0);
+  const diff = Date.now() - inicioAno.getTime();
+  const diaDelAno = Math.floor(diff / 86400000);
+  return rutinas[diaDelAno % rutinas.length];
 }
 
 export async function getEjerciciosDeRutina(
