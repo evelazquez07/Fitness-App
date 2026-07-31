@@ -73,6 +73,10 @@ export default async function RutinasPage({
   const pagina = Math.max(1, Number(searchParams.pagina) || 1);
   const desde = (pagina - 1) * PAGINA;
 
+  // "todos" = rutina completa (mixta, como antes); sin parámetro, por defecto se
+  // muestra un ejemplo puro (espalda) para no volcar 15 rutinas mezcladas de golpe.
+  const grupoSeleccionado = searchParams.grupo === "todos" ? null : searchParams.grupo || "espalda";
+
   let query = supabase
     .from("rutinas")
     .select("*", { count: "exact" })
@@ -82,8 +86,9 @@ export default async function RutinasPage({
   if (searchParams.lugar) {
     query = query.in("lugar_entreno", [searchParams.lugar, "ambos"]);
   }
-  if (searchParams.grupo) {
-    query = query.contains("musculos", [searchParams.grupo]);
+  if (grupoSeleccionado) {
+    // coincidencia EXACTA: solo rutinas 100% de ese músculo, nunca mezcladas
+    query = query.eq("musculos", `{${grupoSeleccionado}}`);
   }
 
   const { data: rutinas, count } = await query
@@ -138,21 +143,26 @@ export default async function RutinasPage({
 
           <div className="flex flex-wrap gap-2">
             <Link
-              href={hrefCon({ grupo: undefined })}
-              className={`rounded-full px-3 py-1 text-xs ${!searchParams.grupo ? "bg-brand-500" : "bg-white/10"}`}
+              href={hrefCon({ grupo: "todos" })}
+              className={`rounded-full px-3 py-1 text-xs ${!grupoSeleccionado ? "bg-brand-500" : "bg-white/10"}`}
             >
-              Todos los músculos
+              Rutina completa
             </Link>
             {GRUPOS.map((g) => (
               <Link
                 key={g.key}
                 href={hrefCon({ grupo: g.key })}
-                className={`rounded-full px-3 py-1 text-xs ${searchParams.grupo === g.key ? "bg-brand-500" : "bg-white/10"}`}
+                className={`rounded-full px-3 py-1 text-xs ${grupoSeleccionado === g.key ? "bg-brand-500" : "bg-white/10"}`}
               >
                 {g.label}
               </Link>
             ))}
           </div>
+          <p className="text-xs text-white/40">
+            {grupoSeleccionado
+              ? `Mostrando solo rutinas 100% de ${GRUPOS.find((g) => g.key === grupoSeleccionado)?.label ?? grupoSeleccionado}.`
+              : "Mostrando la rutina completa (varios músculos, como venía en el recetario)."}
+          </p>
         </div>
 
         <p className="mb-3 text-xs text-white/40">{count ?? 0} rutinas encontradas</p>
